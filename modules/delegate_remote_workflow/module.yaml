@@ -1,0 +1,37 @@
+name: delegate_remote_workflow
+description: "Delegates execution to a remote workflow stored in a Git repository"
+version: "1.0.0"
+class: RemoteDelegator
+author: Yura Bernstein
+
+methods:
+  - name: run
+    description: |
+      Clones a Git repo, fetches the specified workflow YAML, 
+      and executes it in the current engine with injected context.
+    arguments: []
+    params:
+      - name: repo
+        type: string
+        required: true
+        description: "Git repository URL"
+      - name: branch
+        type: string
+        required: true
+        description: "Branch to fetch from"
+      - name: path
+        type: string
+        required: true
+        description: "Path to the workflow YAML inside the repo"
+      - name: token
+        type: string
+        required: false
+        description: "GitHub token for private access"
+      - name: run_conditions
+        type: list
+        required: false
+        description: "List of conditions to evaluate before delegation"
+      - name: condition_logic
+        type: string
+        required: false
+        description: "Logic to combine condition results"

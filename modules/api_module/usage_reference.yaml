@@ -1,0 +1,15 @@
+method: call
+example_input:
+  method: GET
+  url: https://jsonplaceholder.typicode.com/posts/1
+  headers:
+    Accept: application/json
+---
+method: blocking_call
+example_input:
+  method: GET
+  url: https://jsonplaceholder.typicode.com/posts/1
+  polling_mode: status_code
+  expected_status_code: 200
+  poll_interval_seconds: 5
+  timeout_minutes: 1

@@ -1,0 +1,47 @@
+name: slack_module
+class: Slack
+version: 1.0
+author: Yura Bernstein
+
+methods:
+  - name: send_info_message
+    description: Sends an informational Slack message with optional fields or flattened form data.
+    arguments:
+      - name: channel
+        type: string
+        required: true
+      - name: title
+        type: string
+        required: true
+      - name: message
+        type: string
+        required: false
+      - name: keyed_message
+        type: list
+        required: false
+      - name: flatten_form_result
+        type: boolean
+        required: false
+      - name: color
+        type: string
+        required: false
+        default: "info"
+      - name: webhook_url
+        type: string
+        required: false
+
+  - name: send_incident_message
+    description: Sends an incident alert to Slack with severity and on-call details.
+    arguments:
+      - name: channel
+        type: string
+        required: true
+      - name: message
+        type: string
+        required: true
+      - name: severity
+        type: string
+        required: false
+      - name: oncall_user
+        type: string
+        required: false

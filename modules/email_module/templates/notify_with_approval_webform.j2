@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Approval Required</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      color: #222;
+      padding: 20px;
+    }
+    h2 {
+      color: #333;
+    }
+    p {
+      line-height: 1.6;
+    }
+    .label {
+      font-weight: bold;
+    }
+    .link a {
+      color: #1a73e8;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <h2>Approval Required</h2>
+
+  <p>You have a request submitted via SeyoAWE. </p>
+
+  <p><span class="label">Workflow Triggered By:</span> {{ context.user }}</p>
+
+  <p><span class="label">PR Number:</span> {{ context.step_results.git_open_pr.data.pr_number }}</p>
+
+  <p><span class="label">Merge Status:</span> {{ context.step_results.git_open_pr.status }}</p>
+
+  <br>
+
+  <p>To approve or reject the request, please click the link below:</p>
+  <p class="link">
+    <a href="{{ context.approval_link }}">Open Approval Form</a>
+  </p>
+
+</body>
+</html>

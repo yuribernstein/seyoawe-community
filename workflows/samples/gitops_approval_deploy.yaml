@@ -1,0 +1,95 @@
+# ---
+# GitOps Approval-Based Deployment Trigger
+#
+# Watches a file in a GitHub repo and, upon detecting changes,
+# sends an approval request via Slack. Once approved, it simulates
+# deployment by triggering an external API.
+# ---
+
+workflow:
+  name: gitops_file_change_approval_deploy
+  description: >
+    On file change (infra/config.yaml), request approval via Slack.
+    If approved, call an API to simulate a deployment start.
+
+  # Trigger Section
+  # ----------------
+  # Uses GitOps trigger in polling mode to check for file changes.
+  trigger:
+    type: gitops
+    method: poll
+    repo: https://github.com/yuribernstein/testrepo.git
+    branch: main
+    token: "{{ context.github_token }}"
+    poll_interval_seconds: 60
+    files:
+      - path: infra/config.yaml
+
+  # Context Variables
+  # ------------------
+  # Includes values like Slack channel and GitHub token.
+  context_variables:
+    - name: channel
+      type: string
+      default: "#gitops-approvals"
+      description: "Slack channel to send approval request to."
+
+    - name: github_token
+      type: string
+      default: "ghp_exampleToken123456"
+      description: "GitHub token used for polling access."
+
+  # Steps
+  # ------
+  steps:
+    # Step 1: Request Slack-based approval
+    - id: request_approval
+      type: approval
+      description: "Ask user to approve deployment."
+      message: >
+        A change was detected in `infra/config.yaml`. Do you approve deploying the updated configuration?
+      timeout_minutes: 60
+      delivery_step:
+        id: slack_approval_request
+        type: action
+        action: slack_module.Slack.send_info_message
+        input:
+          channel: "{{ context.channel }}"
+          title: "🚦 Deployment Approval Needed"
+          message: >
+            Please approve the config change deployment: <{{ context.approval_link }}|Click here to approve>
+          color: "warning"
+
+    # Step 2: Simulate deployment (only if approved)
+    - id: trigger_deployment
+      type: action
+      action: api_module.API.call
+      input:
+        method: "POST"
+        url: "https://httpbin.org/post"
+        payload:
+          message: "Deployment started for updated config.yaml"
+      terms:
+        rules:
+          - path: context.step_results.request_approval.status
+            operator: equals
+            value: "approved"
+            id: approval_received
+        logic: approval_received
+
+    # Step 3: Notify result in Slack
+    - id: notify_result
+      type: action
+      action: slack_module.Slack.send_info_message
+      input:
+        channel: "{{ context.channel }}"
+        title: "✅ Deployment Triggered"
+        message: "Deployment was triggered after approval."
+        color: "good"
+      terms:
+        rules:
+          - path: context.step_results.request_approval.status
+            operator: equals
+            value: "approved"
+            id: approval_received
+        logic: approval_received

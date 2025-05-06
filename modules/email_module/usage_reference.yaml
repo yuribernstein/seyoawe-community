@@ -1,0 +1,17 @@
+method: send_email
+example_input:
+  to: someone@example.com
+  subject: "Pipeline Completed"
+  body: "<h2>✅ Deployment successful!</h2><p>The workflow completed at {{ context.end_time }}.</p>"
+  html: true
+
+---
+
+method: send_email
+example_input:
+  to:
+    - devops@example.com
+    - teamlead@example.com
+  subject: "[GIT] New Pull Request Created"
+  template: pr_created_notification.j2
+  html: true

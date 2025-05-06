@@ -1,0 +1,292 @@
+body {
+    background-color: #333;
+    font-family: Arial, sans-serif;
+    color: #333;
+    margin: 0;
+    padding: 0;
+  }
+  
+.wizard-step {
+    width: 500px;
+}
+
+.wizard-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+    background-color: #2e3541;
+    position: absolute;
+    height: auto;
+    left: 30%;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    width: 40%;
+    top: 20%;
+    text-align: center;
+    color: white;
+    overflow: hidden;
+  }
+  
+  /* Step transition animations */
+  .wizard-step {
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .next-enter {
+    transform: translateX(100%);
+  }
+  .next-enter-active {
+    transform: translateX(0);
+  }
+  .next-exit {
+    transform: translateX(0);
+  }
+  .next-exit-active {
+    transform: translateX(-100%);
+  }
+  
+  .back-enter {
+    transform: translateX(-100%);
+  }
+  .back-enter-active {
+    transform: translateX(0);
+  }
+  .back-exit {
+    transform: translateX(0);
+  }
+  .back-exit-active {
+    transform: translateX(100%);
+  }
+  
+  /* Navigation buttons */
+  .wizard-buttons {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  button {
+    padding: 10px 20px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  
+  button:hover {
+    opacity: 0.8;
+  }
+  
+  /* Junction (Choice) Buttons */
+  .button-group {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 15px;
+  }
+  
+  .button-group button {
+    background-color: #a66e42;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    color: white;
+    transition: background 0.3s ease-in-out;
+  }
+  
+  .button-group button:hover {
+    background-color: #3a5474;
+  }
+  
+  /* Searchable Dropdown */
+  .searchable-dropdown {
+    position: relative;
+    margin-left: 5%;
+    width: 85%;
+  }
+  
+  .searchable-dropdown input {
+    width: 85%;
+    margin-left: 5%;
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+  }
+  
+  /* Dropdown List */
+  .dropdown-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    max-height: 300px;
+    overflow-y: auto;
+    background: white;
+    color: black;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-top: 5px;
+    list-style: none;
+    padding: 0;
+    z-index: 1000; /* Ensures it appears above all elements */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  }
+  
+  .dropdown-item {
+    padding: 10px;
+    cursor: pointer;
+  }
+  
+  .dropdown-item:hover {
+    background: #be8350;
+    color: white;
+  }
+  
+  .step-label {
+    /* display: flex; */
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .step-icon {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .nav-icon {
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+  }
+  
+  
+  /* Enlarged Wizard for Textbox */
+  .wizard-container.textbox-active {
+    width: 500px;
+    height: auto;
+    min-height: 300px;
+  }
+  
+  /* Inputs & Textbox Styling */
+  input, textarea, select {
+    width: 85%;
+    padding: 10px;
+    margin-top: 10px;
+    border: 2px solid #a66e42; /* Styled border */
+    border-radius: 6px;
+    background-color: white;
+    color: black;
+    font-size: 16px;
+    outline: none;
+  }
+  
+  textarea {
+    height: 120px; /* Bigger default size */
+    resize: vertical; /* Allow resizing */
+  }
+  
+  /* Inputs & Textbox Focus Effect */
+  input:focus, textarea:focus {
+    border-color: #be8350;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  }
+  
+  /* Buttons */
+  button {
+    padding: 10px 20px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    background-color: #a66e42;
+    color: white;
+    transition: background 0.3s ease-in-out;
+  }
+  
+  /* button:hover {
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    margin: 10px;
+    transition: transform 0.2s ease-in-out;
+  } */
+  
+  /* Navigation Icons */
+  .nav-icon {
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    margin: 10px;
+    transition: transform 0.2s ease-in-out;
+  }
+  
+  .nav-icon:hover {
+    transform: scale(1.1);
+  }
+  .multiinput-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .multiinput-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .multiinput-row input {
+    flex-grow: 1;
+    padding: 8px;
+    border: 2px solid #a66e42;
+    border-radius: 6px;
+    font-size: 16px;
+  }
+  
+  .multiinput-row button {
+    background-color: #a66e42;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    cursor: pointer;
+    border-radius: 6px;
+    font-size: 18px;
+  }
+  
+  .multiinput-row button:hover {
+    background-color: #3a5474;
+  }
+  
+
+  .wizard-footer {
+    margin-top: 40px;
+    padding: 12px 0;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #3e4a59;
+  }
+  
+  .footer-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: #3e4a59;
+    font-weight: 500;
+    transition: color 0.2s ease;
+  }
+  
+  .footer-link:hover {
+    color: #1a73e8;
+  }
+  
+  .footer-logo {
+    height: 24px;
+    width: auto;
+    border-radius: 4px;
+  }
+  

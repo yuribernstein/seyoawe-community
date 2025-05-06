@@ -1,0 +1,32 @@
+name: chatbot_module
+class: Chatbot
+version: 1.0
+author: Yura Bernstein
+
+methods:
+  - name: ask
+    description: Sends a message to a chatbot provider (OpenAI, Anthropic, Mistral) and returns the reply.
+    arguments:
+      - name: provider
+        type: string
+        required: true
+      - name: system_prompt
+        type: string
+        required: true
+      - name: user_message
+        type: string
+        required: true
+      - name: model
+        type: string
+        required: false
+      - name: temperature
+        type: float
+        required: false
+      - name: api_key
+        type: string
+        required: false
+
+returns:
+  - status: "ok or fail"
+  - message: Summary of the request result
+  - data: Dict with reply content (if available)

@@ -1,0 +1,45 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "title": "SeyoAWE Module Manifest",
+    "type": "object",
+    "required": ["name", "class", "version", "methods"],
+    "properties": {
+      "name": { "type": "string" },
+      "class": { "type": "string" },
+      "version": {},
+      "author": { "type": "string" },
+      "methods": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": ["name", "description", "arguments"],
+          "properties": {
+            "name": { "type": "string" },
+            "description": { "type": "string" },
+            "arguments": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["name", "type"],
+                "properties": {
+                  "name": { "type": "string" },
+                  "type": { "type": "string" },
+                  "required": { "type": "boolean" },
+                  "default": {}
+                }
+              }
+            },
+            "returns": {
+              "type": "object",
+              "required": ["type", "structure"],
+              "properties": {
+                "type": { "type": "string" },
+                "structure": { "type": "object" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  

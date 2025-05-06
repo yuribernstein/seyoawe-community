@@ -1,0 +1,68 @@
+# ---
+# Scheduled API Watchdog
+#
+# This workflow runs on a schedule (every 5 minutes),
+# polls a target API, and alerts via Slack if the API
+# is down or doesn't respond as expected.
+# ---
+
+workflow:
+  name: scheduled_api_watchdog
+  description: >
+    Polls an API every 5 minutes. If the API doesn't return a 200 status,
+    a Slack alert is sent to notify the team.
+
+  # Trigger
+  # --------
+  # Uses a cron-based scheduled trigger.
+  trigger:
+    type: scheduled
+    cron: "*/5 * * * *"  # Every 5 minutes
+
+  # Context Variables
+  # ------------------
+  context_variables:
+    - name: api_url
+      type: string
+      default: "https://httpbin.org/status/500"
+      description: "The API endpoint to monitor."
+
+    - name: channel
+      type: string
+      default: "#alerts"
+      description: "Slack channel to send alerts to."
+
+  # Steps
+  # ------
+  steps:
+    # Step 1: Make a blocking API call with retry logic
+    - id: api_watchdog
+      type: action
+      action: api_module.API.blocking_call
+      input:
+        method: "GET"
+        url: "{{ context.api_url }}"
+        poll_interval_seconds: 10
+        timeout_minutes: 1
+        polling_mode: "status_code"
+        expected_status_code: 200
+        fail_on_error: false  # Prevents triggering the global_failure_handler; lets the workflow continue to the next step even if the API doesn't respond as expected
+
+    # Step 2: Notify Slack if the API call failed or timed out
+    - id: alert_slack_api_down
+      type: action
+      action: slack_module.Slack.send_info_message
+      input:
+        channel: "{{ context.channel }}"
+        title: "🚨 API Watchdog Alert"
+        message: >
+          The API at {{ context.api_url }} is not responding with 200 OK.
+          Watchdog detected a failure at {{ context.step_results.api_watchdog.attempt_time }}.
+        color: "danger"
+      terms:
+        rules:
+          - path: context.step_results.api_watchdog.status
+            operator: not_equals
+            value: "success"
+            id: api_failed
+        logic: api_failed

@@ -1,0 +1,8 @@
+method: run
+example_input:
+  command: echo "Hello, SeyoAWE!"
+  shell: /bin/bash
+  cwd: /tmp
+  user: root
+  env:
+    CUSTOM_VAR: seyoawe

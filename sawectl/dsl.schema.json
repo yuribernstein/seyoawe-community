@@ -1,0 +1,245 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://seyoawe.dev/dsl.schema.json",
+    "title": "SeyoAWE Workflow DSL Schema",
+    "type": "object",
+    "required": ["workflow"],
+    "properties": {
+      "workflow": {
+        "type": "object",
+        "required": ["name", "steps"],
+        "properties": {
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+  
+          "match": {
+            "type": "object",
+            "properties": {
+              "conditions": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["path", "operator", "id"],
+                  "properties": {
+                    "path": { "type": "string" },
+                    "id": { "type": "string" },
+                    "operator": {
+                      "type": "string",
+                      "enum": ["equals", "not_equals", "present", "absent", "is_in", "not_in", "contains", "not_contains", "starts_with", "length"]
+                    },
+                    "value": {}
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "condition_logic": { "type": "string" }
+            },
+            "additionalProperties": false
+          },
+  
+          "payload_parser": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "required": ["path", "var"],
+                "properties": {
+                "path": { "type": "string" },
+                "var": { "type": "string" },
+                "absent_action": { "type": "string", "enum": ["fail", "ignore"] }
+                },
+                "additionalProperties": false
+            }
+            },
+
+          "trigger": {
+            "type": "object",
+            "required": ["type"],
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": ["api", "scheduled", "gitops", "ad-hoc"]
+              },
+              "cron": { "type": "string" },
+              "method": { "type": "string", "enum": ["poll", "webhook"] },
+              "repo": { "type": "string" },
+              "branch": { "type": "string" },
+              "token": { "type": "string" },
+              "poll_interval_seconds": { "type": "integer" },
+              "github_token": { "type": "string" },
+              "files": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["path"],
+                  "properties": {
+                    "path": { "type": "string" },
+                    "description": { "type": "string" }
+                  },
+                  "additionalProperties": false
+                }
+              }
+            },
+            "additionalProperties": false
+          },
+  
+          "context_variables": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["name", "type"],
+              "properties": {
+                "name": { "type": "string" },
+                "type": { "type": "string" },
+                "default": {},
+                "description": {"type": "string"}
+              },
+              "additionalProperties": false
+            }
+          },
+  
+          "context_modules": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "required": ["module"],
+              "description": {"type": "string"},
+              "properties": {
+                "module": { "type": "string" }
+              },
+              "additionalProperties": true
+            }
+          },
+  
+          "global_failure_handler": {
+            "oneOf": [
+              {
+                "type": "object",
+                "required": ["id", "type", "action"],
+                "properties": {
+                  "id": { "type": "string" },
+                  "type": { "type": "string", "enum": ["action"] },
+                  "action": { "type": "string" },
+                  "input": { "type": "object" },
+                  "description": {"type": "string"}
+                },
+                "additionalProperties": false
+              },
+              {
+                "type": "array",
+                "items": { "type": "string" }
+              }
+            ]
+          },
+  
+          "on_failure": {
+            "type": "object",
+            "properties": {
+              "steps": {
+                "type": "array",
+                "items": { "$ref": "#/$defs/step" }
+              }
+            },
+            "additionalProperties": false
+          },
+  
+          "on_success": {
+            "type": "object",
+            "properties": {
+              "steps": {
+                "type": "array",
+                "items": { "$ref": "#/$defs/step" }
+              }
+            },
+            "additionalProperties": false
+          },
+  
+          "steps": {
+            "type": "array",
+            "items": { "$ref": "#/$defs/step" }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+  
+    "$defs": {
+      "step": {
+        "type": "object",
+        "required": ["id", "type"],
+        "properties": {
+          "id": { "type": "string" },
+            "description": { "type": "string" },
+          "type": {
+            "type": "string",
+            "enum": ["action", "webform", "approval"]
+          },
+  
+          "action": { "type": "string" },
+          "input": { "type": "object" },
+            "terms": {
+            "type": "object",
+            "required": ["rules", "logic"],
+            "properties": {
+                "rules": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "required": ["path", "operator", "id"],
+                    "properties": {
+                    "path": { "type": "string" },
+                    "operator": {
+                        "type": "string",
+                        "enum": ["equals", "not_equals", "present", "absent", "is_in", "not_in", "contains", "not_contains", "starts_with", "length"]
+                    },
+                    "value": {},
+                    "id": { "type": "string" }
+                    },
+                    "additionalProperties": false
+                }
+                },
+                "logic": { "type": "string" }
+            },
+            "additionalProperties": false
+            },
+
+          "register_output": { "type": "string" },
+          "register_vars": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["name"],
+              "properties": {
+                "name": { "type": "string" },
+                "value": { "type": "string" },
+                "conditional": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "if": { "type": "string" },
+                      "elif": { "type": "string" },
+                      "value": { "type": "string" },
+                      "default": { "type": "string" }
+                    }
+                  }
+                },
+                "absent_action": { "type": "string", "enum": ["fail", "ignore"] }
+              },
+              "additionalProperties": false
+            }
+          },
+  
+          "step_failure_handler": { "$ref": "#/$defs/step" },
+  
+          "module": { "type": "string" },
+          "config_file": { "type": "string" },
+          "css_file": { "type": "string" },
+          "timeout_minutes": { "type": "integer" },
+          "delivery_step": { "$ref": "#/$defs/step" },
+          "message": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+  

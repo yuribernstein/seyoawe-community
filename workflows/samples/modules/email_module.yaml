@@ -1,0 +1,9 @@
+steps:
+  - id: notify_admin
+    type: action
+    action: email.Email.send_email
+    input:
+      to: "admin@example.com"
+      subject: "Workflow completed"
+      body: "The task has finished."
+      from_addr: "alerts@example.com"  # overrides global

@@ -1,0 +1,14 @@
+# Style 1: Inline step definition (supported)
+global_failure_handler:
+  id: notify_global_failure
+  type: action
+  action: ...
+  input: ...
+---
+# Style 2: Reference to named steps (also supported)
+global_failure_handler:
+  - notify_global_failure
+steps:
+  notify_global_failure:
+    type: action
+    action: ...

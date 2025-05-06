@@ -1,0 +1,20 @@
+# Environment Configuration for {{ context.user }}
+
+environment:
+  name: {{ context.user }}
+  created_by: seyoawe
+  created_at: "{{ context.timestamp | default('now') }}"
+
+settings:
+  region: {{ context.region | default('us-west-2') }}
+  instance_type: {{ context.instance_type | default('t3.medium') }}
+  replicas: {{ context.replicas | default(2) }}
+
+features:
+  - autoscaling: {{ context.autoscaling | default(true) }}
+  - logging: {{ context.logging | default('enabled') }}
+  - monitoring: {{ context.monitoring | default('basic') }}
+
+metadata:
+  workflow_id: {{ context.workflow_uid }}
+  git_branch: {{ context.git_branch | default('feature-' ~ context.user) }}

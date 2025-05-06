@@ -1,0 +1,14 @@
+method: run
+example_input:
+  repo: https://github.com/your-org/infra-workflows.git
+  branch: main
+  path: workflows/ci/publish.yaml
+  token: ghp_exampletokengoeshere
+  run_conditions:
+    - path: env.type
+      operator: equals
+      value: production
+    - path: payload.force
+      operator: equals
+      value: true
+  condition_logic: "0 or 1"

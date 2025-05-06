@@ -1,0 +1,8 @@
+method: ask
+example_input:
+  provider: openai
+  system_prompt: You are a helpful assistant.
+  user_message: What is the capital of France?
+  model: gpt-4
+  temperature: 0.7
+  api_key: sk-xxxxxx

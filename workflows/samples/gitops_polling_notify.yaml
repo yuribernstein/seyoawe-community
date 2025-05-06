@@ -1,0 +1,55 @@
+# ---
+# GitOps Polling Notification Workflow
+#
+# This workflow demonstrates how to monitor a GitHub repository using polling
+# and trigger a Slack notification when a specific file is updated.
+# It uses the built-in GitOps trigger (polling mode), context variables,
+# and a Slack module for the notification.
+# ---
+
+workflow:
+  name: notify_config_change
+  description: >
+    Monitors infra/config.yaml in the main branch of the specified GitHub repo.
+    Sends a Slack message when a change is detected.
+
+  # Trigger Section
+  # ----------------
+  # Defines the GitOps trigger using polling.
+  # This checks the specified files at the given interval for updates.
+  trigger:
+    type: gitops
+    method: poll
+    repo: https://github.com/yuribernstein/testrepo.git
+    branch: main
+    token: "{{ context.github_token }}"  # Token from context to authenticate
+    poll_interval_seconds: 60            # Check every 60 seconds
+    files:
+      - path: infra/config.yaml          # File to monitor
+
+  # Context Variables
+  # ------------------
+  # Used to pass reusable values (e.g. Slack channel, GitHub token)
+  context_variables:
+    - name: channel
+      type: string
+      default: "#new-channel"
+      description: "Default Slack channel to send alerts to."
+
+    - name: github_token
+      type: string
+      default: "ghp_exampleToken123456"
+      description: "GitHub token for polling access"
+
+  # Steps
+  # ------
+  # When triggered, this step sends a Slack message notifying of the change.
+  steps:
+    - id: notify_change
+      type: action
+      action: slack_module.Slack.send_info_message
+      input:
+        channel: "{{ context.channel }}"
+        title: "📁 Config Change Detected"
+        message: "The file `infra/config.yaml` was updated in the main branch."
+        color: "warning"

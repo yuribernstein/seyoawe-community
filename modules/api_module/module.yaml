@@ -1,0 +1,80 @@
+name: api_module
+class: API
+version: 1.0
+author: Yura Bernstein
+
+methods:
+  - name: call
+    description: Makes a single HTTP API request to the specified URL with optional parameters and body.
+    arguments:
+      - name: method
+        type: string
+        required: true
+      - name: url
+        type: string
+        required: true
+      - name: headers
+        type: dict
+        required: false
+      - name: params
+        type: dict
+        required: false
+      - name: json
+        type: dict
+        required: false
+      - name: data
+        type: dict
+        required: false
+      - name: timeout
+        type: int
+        required: false
+    returns:
+      type: object
+      structure:
+        status: one_of(["ok", "fail"])
+        message: string
+        data: object
+
+  - name: blocking_call
+    description: Makes a blocking/polling API request, waiting for a successful status code or condition match in the response body.
+    arguments:
+      - name: method
+        type: string
+        required: true
+      - name: url
+        type: string
+        required: true
+      - name: headers
+        type: dict
+        required: false
+      - name: params
+        type: dict
+        required: false
+      - name: body
+        type: dict
+        required: false
+      - name: poll_interval_seconds
+        type: int
+        required: false
+        default: 10
+      - name: timeout_minutes
+        type: int
+        required: false
+        default: 5
+      - name: polling_mode
+        type: string
+        required: false
+        default: "status_code"
+      - name: expected_status_code
+        type: int
+        required: false
+        default: 200
+      - name: success_condition
+        type: dict
+        required: false
+    returns:
+      type: object
+      structure:
+        status: one_of(["ok", "fail"])
+        message: string
+        data: object

@@ -1,0 +1,123 @@
+workflow:
+  name: new_employee_onboarding
+
+  match:
+    conditions:
+      - path: payload.event
+        operator: equals
+        value: "hire"
+        id: is_hire_event
+    condition_logic: is_hire_event
+
+  payload_parser:
+    - path: payload.employee_name
+      var: employee_name
+    - path: payload.employee_email
+      var: employee_email
+
+  context_variables:
+    - name: slack_channel
+      type: string
+      default: "#it-onboarding"
+    - name: email_to_notify
+      type: string
+      default: "hr@company.com"
+
+  global_failure_handler:
+    id: onboarding_failed
+    type: action
+    action: slack_module.Slack.send_info_message
+    input:
+      channel: "{{ context.slack_channel }}"
+      title: "🚨 Onboarding Failed"
+      message: "The onboarding for {{ context.employee_name }} has failed at step '{{ context.failed_step_id }}'."
+      color: "danger"
+
+  steps:
+
+    # Step 1: Slack notification - kickoff
+    - id: announce_onboarding
+      type: action
+      action: slack_module.Slack.send_info_message
+      input:
+        channel: "{{ context.slack_channel }}"
+        title: "🎉 New Hire!"
+        message: "Initiating onboarding for *{{ context.employee_name }}* ({{ context.employee_email }})."
+        color: "info"
+
+    # Step 2: Webform for approval & info (e.g., device type, department)
+    - id: onboarding_approval_form
+      type: webform
+      module: webform
+      config_file: onboarding_form.js
+      css_file: form_styles.css
+      timeout_minutes: 120  # 2 hours to respond
+      delivery_step:
+        id: send_form_link
+        type: action
+        action: slack_module.Slack.send_info_message
+        input:
+          channel: "{{ context.slack_channel }}"
+          title: "📝 Onboarding Approval Needed"
+          message: "Please complete the onboarding form for *{{ context.employee_name }}*: <{{ context.approval_link }}|Open Form>"
+          color: "warning"
+
+    # Step 3: Conditional step – only proceed if approved
+    - id: provision_accounts
+      type: action
+      action: api_module.API.call
+      input:
+        method: "POST"
+        url: "https://internal.api.company.com/onboarding"
+        payload:
+          name: "{{ context.employee_name }}"
+          email: "{{ context.employee_email }}"
+          department: "{{ context.step_results.onboarding_approval_form.form_data.department }}"
+          role: "{{ context.step_results.onboarding_approval_form.form_data.role }}"
+      terms:
+        rules:
+          - path: context.step_results.onboarding_approval_form.status
+            operator: equals
+            value: "approved"
+            id: form_approved
+        logic: form_approved
+
+    # Step 4: Confirmation message
+    - id: slack_confirmation
+      type: action
+      action: slack_module.Slack.send_info_message
+      input:
+        channel: "{{ context.slack_channel }}"
+        title: "✅ Onboarding Complete"
+        message: >
+          *{{ context.employee_name }}* has been onboarded successfully.
+        color: "good"
+      terms:
+        rules:
+          - path: context.step_results.onboarding_approval_form.status
+            operator: equals
+            value: "approved"
+            id: form_approved
+        logic: form_approved
+
+    # Step 5: Optional rejection handling
+    - id: slack_rejected
+      type: action
+      action: slack_module.Slack.send_info_message
+      input:
+        channel: "{{ context.slack_channel }}"
+        title: "❌ Onboarding Rejected"
+        message: >
+          Onboarding for *{{ context.employee_name }}* was not approved.
+        color: "danger"
+      terms:
+        rules:
+          - path: context.step_results.onboarding_approval_form.status
+            operator: equals
+            value: "timeout"
+            id: form_timeout
+          - path: context.step_results.onboarding_approval_form.status
+            operator: equals
+            value: "rejected"
+            id: form_rejected
+        logic: form_timeout OR form_rejected

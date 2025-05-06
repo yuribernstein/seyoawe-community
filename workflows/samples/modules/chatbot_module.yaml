@@ -1,0 +1,21 @@
+steps:
+  - id: ask_bot
+    type: action
+    action: chatbot.Chatbot.ask
+    input:
+      user_message: "What are the top 3 risks in deploying ML models to production?"
+      system_prompt: "You are a helpful DevOps expert assistant."
+      provider: "anthropic"
+      model: "claude-3-haiku-20240307"
+      api_key: "{{ context.anthropic_api_key }}"
+---
+steps:
+  - id: bot_respond
+    type: action
+    action: chatbot.Chatbot.ask
+    input:
+      user_message: "How do you build a workflow engine?"
+      system_prompt: "You are a helpful DevOps mentor."
+      provider: "mistral"
+      model: "mistral-medium"
+      api_key: "{{ context.mistral_key }}"

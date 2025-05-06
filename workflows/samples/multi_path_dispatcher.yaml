@@ -1,0 +1,116 @@
+workflow:
+  name: multi_path_dispatcher
+  description: >
+    This workflow evaluates an incoming payload to determine what kind of request was made
+    (e.g., onboarding vs access). It then conditionally calls a sub-workflow via API
+    and uses a chatbot to summarize what it did.
+
+  match:
+    conditions:
+      - path: payload.mode
+        operator: equals
+        value: "dispatch"
+        id: is_dispatch_mode
+    condition_logic: is_dispatch_mode
+
+  payload_parser:
+    - path: payload.user
+      var: user
+    - path: payload.role
+      var: role
+    - path: payload.location
+      var: location
+    - path: payload.request_type
+      var: request_type
+
+  context_variables:
+    - name: channel
+      type: string
+      default: "#ops-routing"
+
+    - name: openai_key
+      type: string
+      default: "sk-..."
+
+  steps:
+    - id: call_onboarding_workflow
+      type: action
+      action: api_module.API.call
+      input:
+        method: POST
+        url: "http://localhost:8080/api/default/onboarding_workflow"
+        payload:
+          mode: "api"
+          user: "{{ context.user }}"
+          role: "{{ context.role }}"
+          location: "{{ context.location }}"
+      terms:
+        rules:
+          - path: context.request_type
+            operator: equals
+            value: "onboarding"
+            id: is_onboarding
+        logic: is_onboarding
+
+    - id: call_access_provisioning
+      type: action
+      action: api_module.API.call
+      input:
+        method: POST
+        url: "http://localhost:8080/api/default/access_provisioning"
+        payload:
+          user: "{{ context.user }}"
+          role: "{{ context.role }}"
+          location: "{{ context.location }}"
+      terms:
+        rules:
+          - path: context.request_type
+            operator: equals
+            value: "access"
+            id: is_access
+        logic: is_access
+
+    - id: notify_unrecognized
+      type: action
+      action: slack_module.Slack.send_info_message
+      input:
+        channel: "{{ context.channel }}"
+        title: "⚠️ Unrecognized Request Type"
+        message: >
+          We received a request from {{ context.user }} but the type '{{ context.request_type }}'
+          is not recognized.
+        color: "danger"
+      terms:
+        rules:
+          - path: context.request_type
+            operator: not_in
+            value: ["access", "onboarding"]
+            id: unknown_type
+        logic: unknown_type
+
+    - id: ask_chatbot_summary
+      type: action
+      action: chatbot_module.Chatbot.ask
+      input:
+        provider: "openai"
+        model: "gpt-4"
+        system_prompt: >
+          You are a routing assistant. Summarize the action taken based on request_type.
+        user_message: >
+          User: {{ context.user }}
+          Role: {{ context.role }}
+          Location: {{ context.location }}
+          Request Type: {{ context.request_type }}.
+          Summarize what was triggered and why.
+        temperature: 0.4
+        api_key: "{{ context.openai_key }}"
+      register_output: summary_bot
+
+    - id: send_chatbot_summary
+      type: action
+      action: slack_module.Slack.send_info_message
+      input:
+        channel: "{{ context.channel }}"
+        title: "🤖 Chatbot Summary"
+        message: "{{ context.summary_bot.data.reply }}"
+        color: "neutral"

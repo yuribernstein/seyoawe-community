@@ -1,0 +1,24 @@
+name: command_module
+class: Command
+version: 1.0
+author: Yura Bernstein
+
+methods:
+  - name: run
+    description: "Execute a shell command in a specific directory and environment"
+    arguments:
+      - name: command
+        type: string
+        required: true
+      - name: shell
+        type: string
+        required: false
+      - name: cwd
+        type: string
+        required: false
+      - name: user
+        type: string
+        required: false
+      - name: env
+        type: dict
+        required: false

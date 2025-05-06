@@ -1,0 +1,45 @@
+name: email_module
+class: Email
+version: 1.0
+author: Yura Bernstein
+
+description: |
+  Provides functionality to send emails using SMTP, supporting dynamic body generation
+  from Jinja2 templates or raw text. Handles HTML or plain text formats.
+  Includes robust error handling and structured responses for workflow integration.
+
+methods:
+  - name: send_email
+    description: Sends an email to the specified recipient(s) using either a provided body or a rendered template.
+    arguments:
+      - name: to
+        type: string or list
+        required: true
+        description: Email address or list of addresses to send to.
+      - name: subject
+        type: string
+        required: true
+        description: Subject of the email.
+      - name: body
+        type: string
+        required: false
+        description: Optional plain text or HTML body for the email.
+      - name: template
+        type: string
+        required: false
+        description: Template file name (Jinja2) to render email body dynamically.
+      - name: html
+        type: boolean
+        required: false
+        default: true
+        description: Whether to send the email as HTML (default true).
+
+    returns:
+      type: object
+      structure:
+        status: string ("ok" or "fail")
+        message: string (summary of success or error)
+        data: object or null (recipient info on success, or None on failure)
+      notes: |
+        - On success: returns "ok" status with email metadata.
+        - On failure: returns "fail" status with error details.

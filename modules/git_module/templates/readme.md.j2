@@ -1,0 +1,4 @@
+environment:
+  name: {{ context.user }}
+  created_by: seyoawe
+  created_at: "{{ context.timestamp | default('now') }}"

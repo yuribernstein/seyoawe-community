@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Approval Form</title>
+    <link rel="stylesheet" href="/webform/{{ uid }}/{{ step_id }}/custom.css" />
+    <script>
+      window.WORKFLOW_UID = "{{ uid }}"; // injected by the engine;
+      window.STEP_ID = "{{ step_id }}"; // injected by the engine;
+      window.MODULE_NAME = "{{ module }}";  // injected by the engine;
+      window.CONFIG_FILE = "{{ config_file }}"; // injected by the engine;
+      console.log(window.CONFIG_FILE);
+    </script>
+    <script type="module" src="/webform/{{ uid }}/{{ step_id }}/webform_bundle.js"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>

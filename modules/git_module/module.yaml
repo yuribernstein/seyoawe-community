@@ -1,0 +1,69 @@
+name: git_module
+class: Git
+version: 1.0
+author: Yura Bernstein
+
+methods:
+  - name: create_branch
+    description: Creates a new Git branch locally.
+    arguments: []
+
+  - name: add_file_from_template
+    description: Renders a Jinja2 template and commits it to the Git repository.
+    arguments:
+      - name: template
+        type: string
+        required: true
+      - name: destination
+        type: string
+        required: true
+      - name: variables
+        type: dict
+        required: false
+      - name: commit_message
+        type: string
+        required: false
+        default: "Add generated file"
+
+  - name: open_pr
+    description: Pushes the branch and opens a GitHub Pull Request.
+    arguments:
+      - name: title
+        type: string
+        required: false
+        default: "Auto-generated PR"
+      - name: body
+        type: string
+        required: false
+        default: "This PR was created by SeyoAWE."
+
+
+  - name: merge_pr
+    description: Merges an open GitHub Pull Request for the branch using squash method.
+    arguments: []
+
+  - name: close_pr
+    description: Closes an open GitHub Pull Request for the branch without merging.
+    arguments: []
+
+
+  - name: get_status
+    description: Returns the current Git repository status.
+    arguments: []
+
+  - name: add_files_from_templates
+    description: Renders and commits multiple files from templates.
+    arguments:
+      - name: files
+        type: list
+        required: true
+      - name: commit_message
+        type: string
+        required: false
+        default: "Add multiple files"
+
+
+  - name: cleanup
+    description: Deletes the cloned local Git repository directory.
+    arguments: []
+

@@ -1,0 +1,37 @@
+steps:
+  - id: call_my_api
+    type: action
+    action: api.API.call
+    input:
+      method: "POST"
+      url: "https://my.internal/api/trigger"
+      json:
+        action: "deploy"
+        env: "prod"
+      headers:
+        Authorization: "Bearer {{ context.deploy_token }}"  # overrides default
+---
+  - id: wait_until_ready
+    type: action
+    action: api.API.blocking_call
+    input:
+      method: "GET"
+      url: "https://my.service/status"
+      polling_mode: "response_body"
+      success_condition:
+        path: "status.phase"
+        operator: "=="
+        value: "ready"
+---
+steps:
+  - id: trigger_api
+    type: action
+    action: api.API.call
+    input:
+      method: "POST"
+      url: "https://api.example.com/deploy"
+      json:
+        env: "prod"
+        action: "start"
+      headers:
+        Authorization: "Bearer {{ context.deploy_token }}"

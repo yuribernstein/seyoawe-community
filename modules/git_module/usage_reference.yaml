@@ -1,0 +1,51 @@
+method: create_branch
+example_input: {}
+
+---
+
+method: add_file_from_template
+example_input:
+  template: "terraform.tf.j2"
+  destination: "infrastructure/dev/terraform.tf"
+  variables:
+    env_name: dev
+    region: us-west-2
+  commit_message: "Add Terraform config for dev"
+
+---
+
+method: add_files_from_templates
+example_input:
+  files:
+    - template: "main.tf.j2"
+      destination: "envs/dev/main.tf"
+    - template: "variables.tf.j2"
+      destination: "envs/dev/variables.tf"
+  commit_message: "Generate TF templates for dev"
+
+---
+
+method: open_pr
+example_input:
+  title: "🔧 Add Terraform for dev"
+  body: "This PR adds initial TF configuration for the dev environment."
+
+---
+
+method: merge_pr
+example_input: {}
+
+---
+
+method: close_pr
+example_input: {}
+
+---
+
+method: get_status
+example_input: {}
+
+---
+
+method: cleanup
+example_input: {}

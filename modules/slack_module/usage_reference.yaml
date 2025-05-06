@@ -1,0 +1,46 @@
+method: send_info_message
+example_input:
+  channel: "#general"
+  title: "Daily Report"
+  message: "All systems are operational."
+  color: "info"
+
+---
+
+method: send_info_message
+example_input:
+  channel: "#alerts"
+  title: "New Deployment"
+  keyed_message:
+    - key: "Environment"
+      value: "production"
+    - key: "Version"
+      value: "v1.2.3"
+    - key: "Triggered by"
+      value: "GitHub Actions"
+  color: "good"
+
+---
+
+method: send_info_message
+example_input:
+  channel: "#forms"
+  title: "Approval Received"
+  flatten_form_result: true
+  color: "approved"
+
+---
+
+method: send_incident_message
+example_input:
+  channel: "#incident-response"
+  message: "Production DB unreachable"
+  severity: "sev1"
+  oncall_user: "@dba-team"
+
+---
+
+method: send_incident_message
+example_input:
+  channel: "#oncall"
+  message: "API latency is elevated"

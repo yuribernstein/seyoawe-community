@@ -1,0 +1,235 @@
+/* ../styles/Wizard.css */
+.wizard-container {
+  background-color: #3b5167;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  width: 400px;
+  text-align: center;
+  color: white;
+  overflow: hidden;
+}
+.wizard-step {
+  transition: transform 0.3s ease-in-out;
+}
+.next-enter {
+  transform: translateX(100%);
+}
+.next-enter-active {
+  transform: translateX(0);
+}
+.next-exit {
+  transform: translateX(0);
+}
+.next-exit-active {
+  transform: translateX(-100%);
+}
+.back-enter {
+  transform: translateX(-100%);
+}
+.back-enter-active {
+  transform: translateX(0);
+}
+.back-exit {
+  transform: translateX(0);
+}
+.back-exit-active {
+  transform: translateX(100%);
+}
+.wizard-buttons {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+}
+button {
+  padding: 10px 20px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+}
+button:hover {
+  opacity: 0.8;
+}
+.button-group {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 15px;
+}
+.button-group button {
+  background-color: #4b688c;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  color: white;
+  transition: background 0.3s ease-in-out;
+}
+.button-group button:hover {
+  background-color: #3a5474;
+}
+.searchable-dropdown {
+  position: relative;
+  margin-left: 5%;
+  width: 85%;
+}
+.searchable-dropdown input {
+  width: 85%;
+  margin-left: 5%;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+.dropdown-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  max-height: 300px;
+  overflow-y: auto;
+  background: white;
+  color: black;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-top: 5px;
+  list-style: none;
+  padding: 0;
+  z-index: 1000;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+.dropdown-item {
+  padding: 10px;
+  cursor: pointer;
+}
+.dropdown-item:hover {
+  background: #007bff;
+  color: white;
+}
+.step-label {
+  align-items: center;
+  gap: 8px;
+}
+.step-icon {
+  width: 20px;
+  height: 20px;
+}
+.nav-icon {
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+}
+.wizard-container.textbox-active {
+  width: 500px;
+  height: auto;
+  min-height: 300px;
+}
+input,
+textarea,
+select {
+  width: 85%;
+  padding: 10px;
+  margin-top: 10px;
+  border: 2px solid #4b688c;
+  border-radius: 6px;
+  background-color: white;
+  color: black;
+  font-size: 16px;
+  outline: none;
+}
+textarea {
+  height: 120px;
+  resize: vertical;
+}
+input:focus,
+textarea:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+button {
+  padding: 10px 20px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  background-color: #4b688c;
+  color: white;
+  transition: background 0.3s ease-in-out;
+}
+.nav-icon {
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  margin: 10px;
+  transition: transform 0.2s ease-in-out;
+}
+.nav-icon:hover {
+  transform: scale(1.1);
+}
+.multiinput-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.multiinput-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.multiinput-row input {
+  flex-grow: 1;
+  padding: 8px;
+  border: 2px solid #4b688c;
+  border-radius: 6px;
+  font-size: 16px;
+}
+.multiinput-row button {
+  background-color: #4b688c;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  cursor: pointer;
+  border-radius: 6px;
+  font-size: 18px;
+}
+.multiinput-row button:hover {
+  background-color: #3a5474;
+}
+
+/* ../styles/Spinner.css */
+.spinner-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+}
+.spinner-overlay.show-overlay {
+  background: rgba(0, 0, 0, 0.3);
+  pointer-events: all;
+}
+.spinner-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.spinner {
+  width: 64px;
+  height: 64px;
+  border: 8px solid #f3f3f3;
+  border-top: 8px solid #4b688c;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

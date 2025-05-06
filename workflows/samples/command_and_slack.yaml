@@ -1,0 +1,42 @@
+workflow:
+  name: run_pwd_and_notify
+
+  trigger:
+    type: ad-hoc
+
+  context_variables:
+    - name: channel
+      type: string
+      default: "#new-channel"
+
+  global_failure_handler:
+    id: notify_failure
+    type: action
+    action: slack_module.Slack.send_info_message
+    input:
+      channel: "{{ context.channel }}"
+      title: "Workflow Failed"
+      message: "Step '{{ context.failed_step_id }}' failed: {{ context.failed_reason }}"
+      color: "danger"
+
+  steps:
+    - id: run_pwd
+      type: action
+      action: command_module.Command.run
+      input:
+        shell: "bash"
+        command: "pwd"
+        working_dir: "/tmp"
+        run_as_user: "nobody"
+        env:
+          TEST_ENV: "true"
+      register_output: pwd_output
+
+    - id: slack_notify
+      type: action
+      action: slack_module.Slack.send_info_message
+      input:
+        channel: "{{ context.channel }}"
+        title: "PWD Output"
+        message: "Command output:\n```\n{{ context.pwd_output.data.stdout }}\n```"
+        color: "good"
